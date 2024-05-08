@@ -121,27 +121,27 @@ WSGI_APPLICATION = 'config.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'earndb',
-        'USER': 'postgres',
-        'PASSWORD': 'root123',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'myappdb',
-#         'USER': 'super',
-#         'PASSWORD': 'kebxun-bekHu8-kawnen',
-#         'HOST': 'Davlatov02-3586.postgres.pythonanywhere-services.com',
-#         'PORT': 13586,
+#         'NAME': 'earndb',
+#         'USER': 'postgres',
+#         'PASSWORD': 'root123',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'myappdb',
+        'USER': 'super',
+        'PASSWORD': 'kebxun-bekHu8-kawnen',
+        'HOST': 'Davlatov02-3586.postgres.pythonanywhere-services.com',
+        'PORT': 13586,
+    }
+}
 
 
 # Password validation

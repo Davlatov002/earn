@@ -17,7 +17,7 @@ class ProfilesingupSerialazer(serializers.ModelSerializer):
 class Tranzaktionserialazer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['username', 'balance_usdt','balance_netbo','balance_btc', 'created_at']
+        fields = ['user', 'balance_netbo', 'created_at']
 
 class ProfileRefeleshSerialazer(serializers.Serializer):
     referal_link = serializers.CharField()

@@ -17,6 +17,7 @@ urlpatterns = [
     path('confirmation-otp/', views.confirmation_otp, name='confirmation-otp'),
     path('update-password/<str:email>/', views.update_password, name='update-password'),
     path('archive-account/<str:pk>/', views.archive_account, name='archive-account'),
+    path('exchange/<str:pk>/', views.exchange, name='exchange'),
     path('send-otp/', views.send_otp, name='send-otp'),
     path('verify-email/<str:pk>/', views.verify_email, name='verify-email'),
     path('balance-history/<str:pk>/', views.balance_history, name='balance-history'),

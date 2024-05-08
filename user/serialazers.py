@@ -86,3 +86,8 @@ class StrengthSerialazer(serializers.ModelSerializer):
     class Meta:
         model = Strength
         fields = '__all__'
+
+class exchangeserialazers(serializers.Serializer):
+    fromm = serializers.CharField()
+    to = serializers.CharField()
+    value = serializers.FloatField()

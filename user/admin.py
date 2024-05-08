@@ -91,6 +91,7 @@ class IdentifiedAdmin(admin.ModelAdmin):
             profile.save()
         super().save_model(request, obj, form, change)
 
+
 class ModelOutAdmin(admin.ModelAdmin):
     list_display = ('user','is_identified', 'formatted_created_at')
     list_filter = (('is_identified', admin.BooleanFieldListFilter), )

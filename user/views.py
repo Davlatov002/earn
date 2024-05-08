@@ -3,7 +3,24 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from .models import Profile, Transaction, Identified, MoneyOut, Strength
 from drf_yasg.utils import swagger_auto_schema
-from .serialazers import ProfileSerializer, ProfilesingupSerialazer, ProfileLoginserialazer, UpdateProfileSerializer, ProfileRefeleshSerialazer,VerificationCodeserialazer ,GMProfileserialazer, UpdatePasswordSerializer, Tranzaktionserialazer, UpdateEmPsSerializer, MoneyOutserialazer, CreatMoneyOutserialazer, IdentifiedSerializer, StrengthSerialazer
+from .serialazers import (
+    ProfileSerializer, 
+    ProfilesingupSerialazer, 
+    ProfileLoginserialazer, 
+    UpdateProfileSerializer, 
+    ProfileRefeleshSerialazer,
+    VerificationCodeserialazer,
+    GMProfileserialazer, 
+    UpdatePasswordSerializer, 
+    Tranzaktionserialazer, 
+    UpdateEmPsSerializer,
+    MoneyOutserialazer, 
+    CreatMoneyOutserialazer, 
+    IdentifiedSerializer, 
+    StrengthSerialazer, 
+    exchangeserialazers,
+    
+)
 import time, calendar
 from django.db.models import Sum
 import random, string
@@ -305,18 +322,10 @@ def ad_reward(request, pk):
     strength = Strength.objects.get(id = 1)
     username_id = profile.id
     taim1 = int(time.time())
-    if profile.number_people < strength.number_people1:
-        nom = strength.netbo + (strength.level1 * profile.number_people)
-    elif profile.number_people < strength.number_people2:
-        nom = strength.netbo + (strength.level2 * profile.number_people)
-    else:
-        nom = strength.netbo + (strength.level3 * profile.number_people)
-    profile.balance_netbo += nom
+    profile.balance_netbo += strength.netbo
     profile.save()
-    data = {"user":username_id, 'balance_netbo':nom, "created_at":taim1}
-
+    data = {"user":username_id, 'balance_netbo':strength.netbo, "created_at":taim1}
     tran = Tranzaktionserialazer(data=data)
-    profile.last_mining = int(time.time())
     profile.save()
     tran.is_valid(raise_exception=True)
     tran.save()
@@ -416,6 +425,7 @@ def moneyout(request, pk):
     else:
         return Response({'message': -1,}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @swagger_auto_schema(methods='GET')
 @api_view(['GET'])
 def get_moneyout_id(request, pk):
@@ -425,13 +435,49 @@ def get_moneyout_id(request, pk):
         return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 @swagger_auto_schema(methods='GET')
 @api_view(['GET'])
 def get_strength(request):
     strength = Strength.objects.get(id=1)
     serializer = StrengthSerialazer(strength)
     return Response({'message': 1,"strength":serializer.data}, status=status.HTTP_200_OK)
+
+
+@swagger_auto_schema(method='PATCH',request_body=exchangeserialazers, operation_description="profile ID sini kirting")
+@api_view(['PATCH'])
+def exchange(request, pk):
+    if request.method == 'PATCH':
+        try:
+            profile = Profile.objects.get(id=pk)
+        except:
+            return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)   
+        fromm = request.data.get('fromm')
+        to = request.data.get('to')
+        value = request.data.get('value')
+        balanc_ust = profile.balance_usdt
+        balanc_btc = profile.balance_btc
+        if fromm == "USDT" and to == "NETBO":
+            if value <= balanc_ust:
+                profile.balance_usdt -= value
+                profile.balance_netbo += (23 * value)
+                profile.save()
+                return Response({'message': 1},status=status.HTTP_200_OK)
+            else:
+                return Response({'message': -2},status=status.HTTP_400_BAD_REQUEST)
+        elif fromm == "BTC" and to == "NETBO":
+            if value <= balanc_btc:
+                profile.balance_btc -= value
+                profile.balance_netbo += (240000 * value)
+                profile.save()
+                return Response({'message': 1},status=status.HTTP_200_OK)
+            else:
+                return Response({'message': -2},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': -3},status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
 
 # @swagger_auto_schema(methods='GET')
 # @api_view(['GET'])

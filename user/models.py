@@ -16,6 +16,10 @@ class Profile(models.Model):
     number_people = models.IntegerField(default=0)
     balance_netbo = models.FloatField(default=0.0)
     wallet_id_netbo = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    netbo_out = models.BooleanField(default=True)
+    balance_usdt = models.FloatField(default=0.0)
+    wallet_id_usdt = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    usdt_out = models.BooleanField(default=True)
     is_identified = models.BooleanField(default=False,null=True, blank=True)
     is_verified = models.IntegerField(null=True, blank=True)
     is_archived = models.IntegerField(null=True, blank=True)
@@ -24,15 +28,12 @@ class Profile(models.Model):
 
     def __str__(self) -> str:
         return self.username
-    
 
 
 class Transaction(models.Model):
     balance_netbo = models.FloatField(default=0.0)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     created_at = models.IntegerField()
-
-
 
 
 class Identified(models.Model):
@@ -54,10 +55,10 @@ class MoneyOut(models.Model):
     created_at = models.IntegerField()
 
 
-
 class Strength(models.Model):
-    level1 = models.FloatField(default=0)
-    number_people1 = models.IntegerField(default=0)
+    referal_netbo = models.FloatField(default=0)
+    netbo = models.FloatField(default=0)
+    taim = models.IntegerField(default=0)
     money_out = models.BooleanField(default=True)
 
 

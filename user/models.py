@@ -79,6 +79,7 @@ class Strength(models.Model):
     exchange = models.FloatField()
     referal_netbo = models.FloatField(default=0)
     referal_bnb = models.FloatField(default=0)
+    default_netbo = models.FloatField(default=0, null=True, blank=True)
     bnb_max_out = models.FloatField(default=0, null=True, blank=True)
     bnb_min_out = models.FloatField(default=0, null=True, blank=True)
     bnb_commission = models.FloatField(default=0, null=True, blank=True)
@@ -86,7 +87,7 @@ class Strength(models.Model):
     netbo_min_out = models.FloatField(default=0, null=True, blank=True)
     netbo_commission = models.FloatField(default=0, null=True, blank=True)
     level = models.ManyToManyField(Level)
-    taim = models.IntegerField(default=0)
+    taim = models.FloatField(default=0)
     money_out = models.BooleanField(default=True)
 
 

@@ -119,7 +119,8 @@ class StrengthSerialazer(serializers.ModelSerializer):
             'netbo_min_out',  
             'netbo_commission', 
             'level', 
-            'taim'
+            'taim',
+            'money_out',
             ]
 
 

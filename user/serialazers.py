@@ -110,6 +110,7 @@ class StrengthSerialazer(serializers.ModelSerializer):
     class Meta:
         model = Strength
         fields = [
+            'exchange',
             'referal_netbo', 
             'referal_bnb', 
             'default_netbo',

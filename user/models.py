@@ -7,17 +7,9 @@ def generate_random_string(length=7):
 
 
 
-class Level_netbo(models.Model):
+class Level(models.Model):
     level = models.IntegerField(default=0)
     netbo = models.FloatField(default=0)
-    price = models.FloatField(default=0)
-
-    def __str__(self) -> str:
-        return str(self.level)
-
-
-class Level_bnb(models.Model):
-    level = models.IntegerField(default=0)
     bnb = models.FloatField(default=0)
     price = models.FloatField(default=0)
 
@@ -36,11 +28,11 @@ class Profile(models.Model):
     balance_netbo = models.FloatField(default=0.0)
     wallet_id_netbo = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     netbo_out = models.BooleanField(default=True)
-    netbo_level = models.ForeignKey(Level_netbo, null=True, blank=True, on_delete=models.SET_NULL)
+    netbo_level = models.ForeignKey(Level, null=True, blank=True, on_delete=models.SET_NULL)
     balance_bnb = models.FloatField(default=0.0)
     wallet_id_bnb = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     bnb_out = models.BooleanField(default=True)
-    bnb_level = models.ForeignKey(Level_bnb, null=True, blank=True, on_delete=models.SET_NULL)
+    bnb_level = models.ForeignKey(Level, null=True, blank=True,related_name='level_bnb', on_delete=models.SET_NULL)
     is_identified = models.BooleanField(default=False,null=True, blank=True)
     is_verified = models.IntegerField(null=True, blank=True)
     friend_referal_link = models.CharField(max_length=255, blank=True, null=True)
@@ -83,28 +75,20 @@ class MoneyOutBnb(models.Model):
 
     
 
-class Strength_netbo(models.Model):
+class Strength(models.Model):
+    exchange = models.FloatField()
     referal_netbo = models.FloatField(default=0)
-    max_out = models.FloatField(default=0, null=True, blank=True)
-    min_out = models.FloatField(default=0, null=True, blank=True)
-    commission = models.FloatField(default=0, null=True, blank=True)
-    level_netbo = models.ManyToManyField(Level_netbo)
-    taim = models.IntegerField(default=0)
-    money_out = models.BooleanField(default=True)
-
-
-class Strength_bnb(models.Model):
     referal_bnb = models.FloatField(default=0)
-    max_out = models.FloatField(default=0, null=True, blank=True)
-    min_out = models.FloatField(default=0, null=True, blank=True)
-    commission = models.FloatField(default=0, null=True, blank=True)
-    level_bnb = models.ManyToManyField(Level_bnb)
+    bnb_max_out = models.FloatField(default=0, null=True, blank=True)
+    bnb_min_out = models.FloatField(default=0, null=True, blank=True)
+    bnb_commission = models.FloatField(default=0, null=True, blank=True)
+    netbo_max_out = models.FloatField(default=0, null=True, blank=True)
+    netbo_min_out = models.FloatField(default=0, null=True, blank=True)
+    netbo_commission = models.FloatField(default=0, null=True, blank=True)
+    level = models.ManyToManyField(Level)
     taim = models.IntegerField(default=0)
     money_out = models.BooleanField(default=True)
 
-
-class Exchange(models.Model):
-    value = models.FloatField()
 
 
     

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Transaction, Identified, MoneyOutNetbo, MoneyOutBnb, Strength_bnb, Strength_netbo, Level_bnb, Level_netbo
+from .models import Profile, Transaction, Identified, MoneyOutNetbo, MoneyOutBnb, Strength, Level
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
@@ -91,40 +91,38 @@ class IdentifiedSerializer(serializers.ModelSerializer):
         model = Identified
         fields = fields = ["fullname", "birthday", "serial_document", "id_image", "address_image", "selfie_image"]
 
-class LevelNetboSerialazer(serializers.ModelSerializer):
+class LevelSerialazer(serializers.ModelSerializer):
     class Meta:
-        model = Level_netbo
+        model = Level
         fields = [
             'level',
+            'bnb',
             'netbo', 
             'price',
             ]
 
-class StrengthNetboSerialazer(serializers.ModelSerializer):
-    level_netbo = LevelNetboSerialazer(many=True, read_only=True)
+
+
+
+class StrengthSerialazer(serializers.ModelSerializer):
+    level = LevelSerialazer(many=True, read_only=True)
 
     class Meta:
-        model = Strength_netbo
+        model = Strength
         fields = [
             'referal_netbo', 
-            'level_netbo', 
-            'taim',
-        ]
+            'referal_bnb', 
+            'bnb_max_out',
+            'bnb_min_out',  
+            'bnb_commission', 
+            'netbo_max_out',
+            'netbo_min_out',  
+            'netbo_commission', 
+            'level', 
+            'taim'
+            ]
 
 
-
-
-class LevelBnbSerialazer(serializers.ModelSerializer):
-    class Meta:
-        model = Level_bnb
-        fields = ['level', 'bnb', 'price',]
-
-class StrengthBnbSerialazer(serializers.ModelSerializer):
-    level_bnb = LevelBnbSerialazer(many=True, read_only=True)
-
-    class Meta:
-        model = Strength_bnb
-        fields = ['referal_bnb', 'level_bnb', 'taim',]
 
 class exchangeserialazers(serializers.Serializer):
     bnb = serializers.FloatField()

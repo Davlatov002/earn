@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Identified, Profile, MoneyOutNetbo, MoneyOutBnb, Transaction, Strength_bnb, Strength_netbo, Level_bnb, Level_netbo, Exchange
+from .models import Identified, Profile, MoneyOutNetbo, MoneyOutBnb, Transaction, Strength, Level
 from django.utils.html import format_html
 from datetime import datetime
 from django.contrib import messages
@@ -10,8 +10,7 @@ def make_identified(modeladmin, request, queryset):
     for obj in queryset:
         if obj.is_identified != True:
             a = obj.user.id
-            strength_netbo = Strength_netbo.objects.get(id=1)
-            strength_bnb = Strength_bnb.objects.get(id=1)
+            strength = Strength.objects.get(id=1)
             profile = Profile.objects.get(id=a)
             link = profile.friend_referal_link
             profile.is_identified = True
@@ -19,22 +18,22 @@ def make_identified(modeladmin, request, queryset):
             obj.save()
             profile.save()
             if link != None:
-                profile.balance_netbo += strength_netbo.referal_netbo
-                profile.balance_bnb += strength_bnb.referal_bnb
+                profile.balance_netbo += strength.referal_netbo
+                profile.balance_bnb += strength.referal_bnb
                 pr_username = profile.id
                 profile.save()
                 taim = int(time.time())
-                data = {"user":pr_username,'balance_netbo':strength_netbo.referal_netbo, 'balance_bnb':strength_bnb.referal_bnb,"created_at":taim}
+                data = {"user":pr_username,'balance_netbo':strength.referal_netbo, 'balance_bnb':strength.referal_bnb,"created_at":taim}
                 tran = serialazers.Tranzaktionserialazer(data=data)
                 if tran.is_valid():
                     tran.save()
 
                 frend = Profile.objects.get(referal_link=link)
                 frend.number_people += 1
-                frend.balance_netbo += strength_netbo.referal_netbo
-                frend.balance_bnb += strength_bnb.referal_bnb
+                frend.balance_netbo += strength.referal_netbo
+                frend.balance_bnb += strength.referal_bnb
                 fr_username = frend.id
-                data = {"user":fr_username,'balance_netbo':strength_netbo.referal_netbo, 'balance_bnb':strength_bnb.referal_bnb,"created_at":taim}
+                data = {"user":fr_username,'balance_netbo':strength.referal_netbo, 'balance_bnb':strength.referal_bnb,"created_at":taim}
                 frend.save()
                 tran = serialazers.Tranzaktionserialazer(data=data)
                 if tran.is_valid():
@@ -63,8 +62,7 @@ class IdentifiedAdmin(admin.ModelAdmin):
     display_selfie_image.short_description = 'Selfie Image'
 
     def save_model(self, request, obj, form, change):
-        strength_netbo = Strength_netbo.objects.get(id=1)
-        strength_bnb = Strength_bnb.objects.get(id=1)
+        strength = Strength.objects.get(id=1)
         if 'is_identified' in form.changed_data and form.cleaned_data['is_identified'] == True:
             a = form.cleaned_data['user'].id
             profile = Profile.objects.get(id=a)
@@ -72,22 +70,22 @@ class IdentifiedAdmin(admin.ModelAdmin):
             profile.is_identified = True
             profile.save()
             if link != None:
-                profile.balance_netbo += strength_netbo.referal_netbo
-                profile.balance_bnb += strength_bnb.referal_bnb
+                profile.balance_netbo += strength.referal_netbo
+                profile.balance_bnb += strength.referal_bnb
                 pr_username = profile.id
                 profile.save()
                 taim = int(time.time())
-                data = {"user":pr_username,'balance_netbo':strength_netbo.referal_netbo, 'balance_bnb':strength_bnb.referal_bnb,"created_at":taim}
+                data = {"user":pr_username,'balance_netbo':strength.referal_netbo, 'balance_bnb':strength.referal_bnb,"created_at":taim}
                 tran = serialazers.Tranzaktionserialazer(data=data)
                 if tran.is_valid():
                     tran.save()
 
                 frend = Profile.objects.get(referal_link=link)
                 frend.number_people += 1
-                frend.balance_netbo += strength_netbo.referal_netbo
-                frend.balance_bnb += strength_bnb.referal_bnb
+                frend.balance_netbo += strength.referal_netbo
+                frend.balance_bnb += strength.referal_bnb
                 fr_username = frend.id
-                data = {"user":fr_username,'balance_netbo':strength_netbo.referal_netbo, 'balance_bnb':strength_bnb.referal_bnb,"created_at":taim}
+                data = {"user":fr_username,'balance_netbo':strength.referal_netbo, 'balance_bnb':strength.referal_bnb,"created_at":taim}
                 frend.save()
                 tran = serialazers.Tranzaktionserialazer(data=data)
                 if tran.is_valid():
@@ -170,8 +168,5 @@ admin.site.register(Identified, IdentifiedAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(MoneyOutNetbo, ModelOutNetboAdmin)
 admin.site.register(MoneyOutBnb, ModelOutBnbAdmin)
-admin.site.register(Strength_netbo)
-admin.site.register(Strength_bnb)
-admin.site.register(Level_netbo)
-admin.site.register(Level_bnb)
-admin.site.register(Exchange)
+admin.site.register(Strength)
+admin.site.register(Level)

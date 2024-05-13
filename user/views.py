@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import json
 from rest_framework import status, generics
-from .models import Profile, Transaction, Identified, MoneyOutNetbo, MoneyOutBnb, Strength_bnb, Strength_netbo, Level_bnb, Level_netbo, Exchange
+from .models import Profile, Transaction, Identified, MoneyOutNetbo, MoneyOutBnb, Strength, Level
 from drf_yasg.utils import swagger_auto_schema
 from .serialazers import (
     ProfileSerializer, 
@@ -21,10 +21,8 @@ from .serialazers import (
     CreatMoneyOutBnbserialazer, 
     IdentifiedSerializer, 
     exchangeserialazers,
-    StrengthBnbSerialazer,
-    StrengthNetboSerialazer,
-    LevelBnbSerialazer,
-    LevelNetboSerialazer,
+    StrengthSerialazer,
+    LevelSerialazer,
     
 )
 import time, calendar
@@ -306,7 +304,7 @@ def ad_reward_netbo(request, pk):
         return Response({'message': 1},status=status.HTTP_200_OK)
     else:
         try:
-            level = Level_netbo.objects.get(level = 1)
+            level = Level.objects.get(level = 1)
         except:
             return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
         profile.balance_netbo += level.netbo
@@ -407,7 +405,7 @@ def moneyout_netbo(request, pk):
         profile = Profile.objects.get(id=pk)
     except:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
-    stf = get_object_or_404(Strength_netbo, id = 1).money_out
+    stf = get_object_or_404(Strength, id = 1).money_out
     if stf == True and profile.netbo_out == True:
         taim = int(time.time())
         wallet_address = request.data.get('wallet_addres')
@@ -440,7 +438,7 @@ def moneyout_bnb(request, pk):
         profile = Profile.objects.get(id=pk)
     except:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
-    stf = get_object_or_404(Strength_bnb, id = 1).money_out
+    stf = get_object_or_404(Strength, id = 1).money_out
     if stf == True and profile.bnb_out == True:
         taim = int(time.time())
         wallet_address = request.data.get('wallet_addres')
@@ -466,45 +464,25 @@ def get_moneyout_bnb_id(request, pk):
     else:
         return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
     
+
 @swagger_auto_schema(methods='GET')
 @api_view(['GET'])
-def get_level_bnb_id(request, pk):
+def get_level_id(request, pk):
     if request.method == 'GET':
         try:
-            moneyouts = Level_bnb.objects.get(id=pk)
+            moneyouts = Level.objects.get(id=pk)
         except:
             return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = LevelBnbSerialazer(moneyouts)
+        serializer = LevelSerialazer(moneyouts)
         return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(methods='GET')
 @api_view(['GET'])
-def get_level_netbo_id(request, pk):
-    if request.method == 'GET':
-        try:
-            moneyouts = Level_netbo.objects.get(id=pk)
-        except:
-            return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = LevelNetboSerialazer(moneyouts)
-        return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
-    else:
-        return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
-
-@swagger_auto_schema(methods='GET')
-@api_view(['GET'])
-def get_strength_netbo(request):
-    strength = Strength_netbo.objects.get(id=1)
-    serializer = StrengthNetboSerialazer(strength)
-    return Response({'message': 1,"strength":serializer.data}, status=status.HTTP_200_OK)
-
-
-@swagger_auto_schema(methods='GET')
-@api_view(['GET'])
-def get_strength_bnb(request):
-    strength = Strength_bnb.objects.get(id=1)
-    serializer = StrengthBnbSerialazer(strength)
+def get_strength(request):
+    strength = Strength.objects.get(id=1)
+    serializer = StrengthSerialazer(strength)
     return Response({'message': 1,"strength":serializer.data}, status=status.HTTP_200_OK)
 
 
@@ -519,12 +497,12 @@ def exchange(request, pk):
         bnb = request.data.get('bnb')
         balanc_bnb = profile.balance_bnb
         try:
-            exchange = Exchange.objects.get(id = 1)
+            exchange = Strength.objects.get(id = 1)
         except:
             return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)  
         if bnb <= balanc_bnb:
             profile.balance_bnb -= bnb
-            profile.balance_netbo += (exchange.value * bnb)
+            profile.balance_netbo += (exchange.exchange * bnb)
             profile.save()
             return Response({'message': 1},status=status.HTTP_200_OK)
         else:

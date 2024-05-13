@@ -112,6 +112,7 @@ class StrengthSerialazer(serializers.ModelSerializer):
         fields = [
             'referal_netbo', 
             'referal_bnb', 
+            'default_netbo',
             'bnb_max_out',
             'bnb_min_out',  
             'bnb_commission', 

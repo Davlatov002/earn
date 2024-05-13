@@ -87,7 +87,7 @@ class Strength(models.Model):
     netbo_min_out = models.FloatField(default=0, null=True, blank=True)
     netbo_commission = models.FloatField(default=0, null=True, blank=True)
     level = models.ManyToManyField(Level)
-    taim = models.FloatField(default=0)
+    taim = models.FloatField(default=0.5)
     money_out = models.BooleanField(default=True)
 
 

@@ -304,10 +304,10 @@ def ad_reward_netbo(request, pk):
         return Response({'message': 1},status=status.HTTP_200_OK)
     else:
         try:
-            level = Level.objects.get(level = 1)
+            level = Strength.objects.get(level = 1)
         except:
             return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
-        profile.balance_netbo += level.netbo
+        profile.balance_netbo += level.default_netbo
         profile.save()
         return Response({'message': 1},status=status.HTTP_400_BAD_REQUEST)
 

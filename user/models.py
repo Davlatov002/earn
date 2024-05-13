@@ -85,6 +85,9 @@ class MoneyOutBnb(models.Model):
 
 class Strength_netbo(models.Model):
     referal_netbo = models.FloatField(default=0)
+    max_out = models.FloatField(default=0, null=True, blank=True)
+    min_out = models.FloatField(default=0, null=True, blank=True)
+    commission = models.FloatField(default=0, null=True, blank=True)
     level_netbo = models.ManyToManyField(Level_netbo)
     taim = models.IntegerField(default=0)
     money_out = models.BooleanField(default=True)
@@ -92,6 +95,9 @@ class Strength_netbo(models.Model):
 
 class Strength_bnb(models.Model):
     referal_bnb = models.FloatField(default=0)
+    max_out = models.FloatField(default=0, null=True, blank=True)
+    min_out = models.FloatField(default=0, null=True, blank=True)
+    commission = models.FloatField(default=0, null=True, blank=True)
     level_bnb = models.ManyToManyField(Level_bnb)
     taim = models.IntegerField(default=0)
     money_out = models.BooleanField(default=True)

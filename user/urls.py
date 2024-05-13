@@ -31,6 +31,8 @@ urlpatterns = [
     path("moneyout-bnb/<str:pk>/", views.moneyout_bnb, name='moneyout-bnb'),
     path("recovery-password/<str:email>/", views.send_otp, name='recovery-password'),
 
+    path("get-level-bnb-id/<str:pk>/", views.get_level_bnb_id, name='get-level-bnb-id'),
+    path("get-level-netbo-id/<str:pk>/", views.get_level_netbo_id, name='get-level-netbo-id'),
     path('get-strength-bnb/', views.get_strength_bnb, name='get-strength-bnb'),
     path('get-strength-netbo/', views.get_strength_netbo, name='get-strength-netbo'),
 

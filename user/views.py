@@ -23,6 +23,8 @@ from .serialazers import (
     exchangeserialazers,
     StrengthBnbSerialazer,
     StrengthNetboSerialazer,
+    LevelBnbSerialazer,
+    LevelNetboSerialazer,
     
 )
 import time, calendar
@@ -291,8 +293,8 @@ def activate_referral_link(request, pk):
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
     
     
-@swagger_auto_schema(method='PATCH', operation_description="Ball berladigan profile ID sini kirting")
-@api_view(['PATCH'])
+@swagger_auto_schema(method='POST', operation_description="Ball berladigan profile ID sini kirting")
+@api_view(['POST'])
 def ad_reward_netbo(request, pk):
     try:
         profile = Profile.objects.get(id=pk)
@@ -312,8 +314,8 @@ def ad_reward_netbo(request, pk):
         return Response({'message': 1},status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(method='PATCH', operation_description="Ball berladigan profile ID sini kirting")
-@api_view(['PATCH'])
+@swagger_auto_schema(method='POST', operation_description="Ball berladigan profile ID sini kirting")
+@api_view(['POST'])
 def ad_reward_bnb(request, pk):
     try:
         profile = Profile.objects.get(id=pk)
@@ -460,6 +462,32 @@ def get_moneyout_bnb_id(request, pk):
     if request.method == 'GET':
         moneyouts = MoneyOutBnb.objects.filter(user=pk)
         serializer = MoneyOutBnbserialazer(moneyouts, many=True)
+        return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
+    
+@swagger_auto_schema(methods='GET')
+@api_view(['GET'])
+def get_level_bnb_id(request, pk):
+    if request.method == 'GET':
+        try:
+            moneyouts = Level_bnb.objects.get(id=pk)
+        except:
+            return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = LevelBnbSerialazer(moneyouts)
+        return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(methods='GET')
+@api_view(['GET'])
+def get_level_netbo_id(request, pk):
+    if request.method == 'GET':
+        try:
+            moneyouts = Level_netbo.objects.get(id=pk)
+        except:
+            return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = LevelNetboSerialazer(moneyouts)
         return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)

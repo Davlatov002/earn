@@ -1,7 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import json
 from rest_framework import status, generics
-from .models import Profile, Transaction, Identified, MoneyOut, Strength
+from .models import Profile, Transaction, Identified, MoneyOutNetbo, MoneyOutBnb, Strength_bnb, Strength_netbo, Level_bnb, Level_netbo, Exchange
 from drf_yasg.utils import swagger_auto_schema
 from .serialazers import (
     ProfileSerializer, 
@@ -14,11 +15,14 @@ from .serialazers import (
     UpdatePasswordSerializer, 
     Tranzaktionserialazer, 
     UpdateEmPsSerializer,
-    MoneyOutserialazer, 
-    CreatMoneyOutserialazer, 
+    MoneyOutBnbserialazer, 
+    MoneyOutNetboserialazer,
+    CreatMoneyOutNetboserialazer,
+    CreatMoneyOutBnbserialazer, 
     IdentifiedSerializer, 
-    StrengthSerialazer, 
     exchangeserialazers,
+    StrengthBnbSerialazer,
+    StrengthNetboSerialazer,
     
 )
 import time, calendar
@@ -172,17 +176,6 @@ def update_email_password(request, pk):
     serializer = ProfileSerializer(profile)
     return Response({'message': 1, "profile": serializer.data}, status=status.HTTP_200_OK)
 
-@swagger_auto_schema(method='PATCH', operation_description="O'chirmoqchi bo'lgan Profileni ID sini kirting")
-@api_view(['PATCH'])
-def archive_account(request, pk):
-    if request.method == 'PATCH':
-        profile = Profile.objects.get(id=pk)
-        is_data = int(time.time())
-        profile.is_archived = is_data
-        profile.save()
-        return Response({'message': 1}, status=status.HTTP_200_OK)
-    else:
-        return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(method='PATCH', operation_description="O'chirmoqchi bo'lgan Profileni ID sini kirting")
 @api_view(['PATCH'])
@@ -234,14 +227,7 @@ def get_profile_id(request, pk):
     if request.method == 'GET':
         profile = Profile.objects.get(id=pk)
         serializer = ProfileSerializer(profile)
-        us = profile.username
-        taim = date.today()
-        s = 0
-        tr = Transaction.objects.filter(username=us)
-        for i in tr:
-            if i.created_at == taim:
-                s += 1
-        return Response({'message': 1,"profile":serializer.data, "ad_count":s}, status=status.HTTP_200_OK)
+        return Response({'message': 1,"profile":serializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
 
@@ -251,14 +237,7 @@ def get_profile_username(request, username):
     if request.method == 'GET':
         profile = Profile.objects.get(username=username)
         serializer = ProfileSerializer(profile)
-        us = profile.username
-        taim = date.today()
-        s = 0
-        tr = Transaction.objects.filter(username=us)
-        for i in tr:
-            if i.created_at == taim:
-                s += 1
-        return Response({'message': 1,"profile":serializer.data, "ad_count":s}, status=status.HTTP_200_OK)
+        return Response({'message': 1,"profile":serializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
     
@@ -314,22 +293,38 @@ def activate_referral_link(request, pk):
     
 @swagger_auto_schema(method='PATCH', operation_description="Ball berladigan profile ID sini kirting")
 @api_view(['PATCH'])
-def ad_reward(request, pk):
+def ad_reward_netbo(request, pk):
     try:
         profile = Profile.objects.get(id=pk)
     except:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
-    strength = Strength.objects.get(id = 1)
-    username_id = profile.id
-    taim1 = int(time.time())
-    profile.balance_netbo += strength.netbo
-    profile.save()
-    data = {"user":username_id, 'balance_netbo':strength.netbo, "created_at":taim1}
-    tran = Tranzaktionserialazer(data=data)
-    profile.save()
-    tran.is_valid(raise_exception=True)
-    tran.save()
-    return Response({'message': 1, "transaction":tran.data},status=status.HTTP_200_OK)
+    if profile.netbo_level != None:
+        profile.balance_netbo += profile.netbo_level.netbo
+        profile.save()
+        return Response({'message': 1},status=status.HTTP_200_OK)
+    else:
+        try:
+            level = Level_netbo.objects.get(level = 1)
+        except:
+            return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
+        profile.balance_netbo += level.netbo
+        profile.save()
+        return Response({'message': 1},status=status.HTTP_400_BAD_REQUEST)
+
+
+@swagger_auto_schema(method='PATCH', operation_description="Ball berladigan profile ID sini kirting")
+@api_view(['PATCH'])
+def ad_reward_bnb(request, pk):
+    try:
+        profile = Profile.objects.get(id=pk)
+    except:
+        return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
+    if profile.bnb_level != None:
+        profile.balance_bnb += profile.bnb_level.bnb
+        profile.save()
+        return Response({'message': 1},status=status.HTTP_200_OK)
+    else:
+        return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -403,20 +398,20 @@ def get_identified_id(request, pk):
     else:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
 
-@swagger_auto_schema(method='POST', request_body=CreatMoneyOutserialazer, operation_description="Malumotlarni kirting")
+@swagger_auto_schema(method='POST', request_body=CreatMoneyOutNetboserialazer, operation_description="Malumotlarni kirting")
 @api_view(['POST'])
-def moneyout(request, pk):
-    stf = get_object_or_404(Strength, id = 1).money_out
-    if stf == True:
-        try:
-            profile = Profile.objects.get(id=pk)
-        except:
-            return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
+def moneyout_netbo(request, pk):
+    try:
+        profile = Profile.objects.get(id=pk)
+    except:
+        return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
+    stf = get_object_or_404(Strength_netbo, id = 1).money_out
+    if stf == True and profile.netbo_out == True:
         taim = int(time.time())
         wallet_address = request.data.get('wallet_addres')
         balance_netboo = request.data.get('balance_netbo')
         data = {"wallet_addres":wallet_address, "user":profile.id, "balance_netbo":balance_netboo, "created_at":taim}
-        ser = MoneyOutserialazer(data=data)
+        ser = MoneyOutNetboserialazer(data=data)
         ser.is_valid(raise_exception=True)
         ser.save()
         profile.balance_netbo -= balance_netboo
@@ -428,20 +423,60 @@ def moneyout(request, pk):
 
 @swagger_auto_schema(methods='GET')
 @api_view(['GET'])
-def get_moneyout_id(request, pk):
+def get_moneyout_netbo_id(request, pk):
     if request.method == 'GET':
-        moneyouts = MoneyOut.objects.filter(user=pk)
-        serializer = MoneyOutserialazer(moneyouts, many=True)
+        moneyouts = MoneyOutNetbo.objects.filter(user=pk)
+        serializer = MoneyOutNetboserialazer(moneyouts, many=True)
         return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
     else:
         return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(method='POST', request_body=CreatMoneyOutBnbserialazer, operation_description="Malumotlarni kirting")
+@api_view(['POST'])
+def moneyout_bnb(request, pk):
+    try:
+        profile = Profile.objects.get(id=pk)
+    except:
+        return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
+    stf = get_object_or_404(Strength_bnb, id = 1).money_out
+    if stf == True and profile.bnb_out == True:
+        taim = int(time.time())
+        wallet_address = request.data.get('wallet_addres')
+        balance_bnb = request.data.get('balance_bnb')
+        data = {"wallet_addres":wallet_address, "user":profile.id, "balance_bnb":balance_bnb, "created_at":taim}
+        ser = MoneyOutNetboserialazer(data=data)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        profile.balance_netbo -= balance_bnb
+        profile.save()
+        return Response({'message': 1,"data":ser.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': -1,}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @swagger_auto_schema(methods='GET')
 @api_view(['GET'])
-def get_strength(request):
-    strength = Strength.objects.get(id=1)
-    serializer = StrengthSerialazer(strength)
+def get_moneyout_bnb_id(request, pk):
+    if request.method == 'GET':
+        moneyouts = MoneyOutBnb.objects.filter(user=pk)
+        serializer = MoneyOutBnbserialazer(moneyouts, many=True)
+        return Response({'message': 1, "data": serializer.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': -1}, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(methods='GET')
+@api_view(['GET'])
+def get_strength_netbo(request):
+    strength = Strength_netbo.objects.get(id=1)
+    serializer = StrengthNetboSerialazer(strength)
+    return Response({'message': 1,"strength":serializer.data}, status=status.HTTP_200_OK)
+
+
+@swagger_auto_schema(methods='GET')
+@api_view(['GET'])
+def get_strength_bnb(request):
+    strength = Strength_bnb.objects.get(id=1)
+    serializer = StrengthBnbSerialazer(strength)
     return Response({'message': 1,"strength":serializer.data}, status=status.HTTP_200_OK)
 
 
@@ -453,54 +488,18 @@ def exchange(request, pk):
             profile = Profile.objects.get(id=pk)
         except:
             return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)   
-        fromm = request.data.get('fromm')
-        to = request.data.get('to')
-        value = request.data.get('value')
-        balanc_ust = profile.balance_usdt
-        balanc_btc = profile.balance_btc
-        if fromm == "USDT" and to == "NETBO":
-            if value <= balanc_ust:
-                profile.balance_usdt -= value
-                profile.balance_netbo += (23 * value)
-                profile.save()
-                return Response({'message': 1},status=status.HTTP_200_OK)
-            else:
-                return Response({'message': -2},status=status.HTTP_400_BAD_REQUEST)
-        elif fromm == "BTC" and to == "NETBO":
-            if value <= balanc_btc:
-                profile.balance_btc -= value
-                profile.balance_netbo += (240000 * value)
-                profile.save()
-                return Response({'message': 1},status=status.HTTP_200_OK)
-            else:
-                return Response({'message': -2},status=status.HTTP_400_BAD_REQUEST)
+        bnb = request.data.get('bnb')
+        balanc_bnb = profile.balance_bnb
+        try:
+            exchange = Exchange.objects.get(id = 1)
+        except:
+            return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)  
+        if bnb <= balanc_bnb:
+            profile.balance_bnb -= bnb
+            profile.balance_netbo += (exchange.value * bnb)
+            profile.save()
+            return Response({'message': 1},status=status.HTTP_200_OK)
         else:
-            return Response({'message': -3},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': -2},status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
-
-# @swagger_auto_schema(methods='GET')
-# @api_view(['GET'])
-# def loadjson(request):
-#     if request.method == 'GET':
-#         file_path = '/Users/davlatovbarot/Desktop/Projects/MNG/mainapp/profile_data12.json'
-#         with open(file_path, 'r') as f:
-#             data = json.load(f)
-#             for item in data:
-#                 email1 = item["fields"]["email"]
-#                 password1 = item["fields"]["password"]
-#                 username1 = item["fields"]["username"]
-#                 name1 = item["fields"]["name"]
-#                 surname1 = item["fields"]["surname"]
-#                 referal_link1 = item["fields"]["referal_link"]
-#                 number_people1 = item["fields"]["number_people"]
-#                 balance_netbo1 = item["fields"]["balance_netbo"]
-#                 wallet_id_netbo1 = item["fields"]["wallet_id_netbo"]
-#                 is_identified1 = item["fields"]["is_identified"]
-#                 is_verified1 = item["fields"]["is_verified"]
-#                 friend_referal_link1 = item["fields"]["friend_referal_link"]
-#                 profile = Profile(email=email1, password=password1, username=username1, name=name1, surname=surname1,referal_link=referal_link1, number_people=number_people1, balance_netbo=balance_netbo1, wallet_id_netbo=wallet_id_netbo1, is_identified=is_identified1,is_verified=is_verified1, friend_referal_link=friend_referal_link1)
-#                 profile.save()
-#             return Response({'message': 1}, status=status.HTTP_200_OK)
-#     else:
-#         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)

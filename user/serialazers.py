@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Transaction, Identified, MoneyOut, Strength
+from .models import Profile, Transaction, Identified, MoneyOutNetbo, MoneyOutBnb, Strength_bnb, Strength_netbo, Level_bnb, Level_netbo
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
@@ -12,12 +12,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ProfilesingupSerialazer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['username', 'email', 'password','mac_address']
+        fields = ['username', 'email', 'password']
 
 class Tranzaktionserialazer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['user', 'balance_netbo', 'created_at']
+        fields = ['user', 'balance_netbo', 'balance_bnb', 'created_at']
 
 class ProfileRefeleshSerialazer(serializers.Serializer):
     referal_link = serializers.CharField()
@@ -68,13 +68,22 @@ class IdentifiedSerialazer(serializers.ModelSerializer):
         model = Identified
         fields = '__all__'
 
-class CreatMoneyOutserialazer(serializers.Serializer):
+class CreatMoneyOutNetboserialazer(serializers.Serializer):
     wallet_addres = serializers.CharField()
     balance_netbo = serializers.FloatField()
 
-class MoneyOutserialazer(serializers.ModelSerializer):
+class CreatMoneyOutBnbserialazer(serializers.Serializer):
+    wallet_addres = serializers.CharField()
+    balance_bnb = serializers.FloatField()
+
+class MoneyOutNetboserialazer(serializers.ModelSerializer):
     class Meta:
-        model = MoneyOut
+        model = MoneyOutNetbo
+        fields = '__all__'
+
+class MoneyOutBnbserialazer(serializers.ModelSerializer):
+    class Meta:
+        model = MoneyOutBnb
         fields = '__all__'
 
 class IdentifiedSerializer(serializers.ModelSerializer):
@@ -82,12 +91,40 @@ class IdentifiedSerializer(serializers.ModelSerializer):
         model = Identified
         fields = fields = ["fullname", "birthday", "serial_document", "id_image", "address_image", "selfie_image"]
 
-class StrengthSerialazer(serializers.ModelSerializer):
+class LevelNetboSerialazer(serializers.ModelSerializer):
     class Meta:
-        model = Strength
-        fields = '__all__'
+        model = Level_netbo
+        fields = [
+            'level',
+            'netbo', 
+            'price',
+            ]
+
+class StrengthNetboSerialazer(serializers.ModelSerializer):
+    level_netbo = LevelNetboSerialazer(many=True, read_only=True)
+
+    class Meta:
+        model = Strength_netbo
+        fields = [
+            'referal_netbo', 
+            'level_netbo', 
+            'taim',
+        ]
+
+
+
+
+class LevelBnbSerialazer(serializers.ModelSerializer):
+    class Meta:
+        model = Level_bnb
+        fields = ['level', 'bnb', 'price',]
+
+class StrengthBnbSerialazer(serializers.ModelSerializer):
+    level_bnb = LevelBnbSerialazer(many=True, read_only=True)
+
+    class Meta:
+        model = Strength_bnb
+        fields = ['referal_bnb', 'level_bnb', 'taim',]
 
 class exchangeserialazers(serializers.Serializer):
-    fromm = serializers.CharField()
-    to = serializers.CharField()
-    value = serializers.FloatField()
+    bnb = serializers.FloatField()

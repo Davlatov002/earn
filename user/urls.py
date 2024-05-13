@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -13,18 +15,25 @@ urlpatterns = [
     path('update-email-password/<str:pk>/', views.update_email_password, name='update-email-password'),
     path('delete-profile/<str:pk>/', views.delete_profile, name='delete-profile'),
     path('activate-referral-link/<str:pk>/', views.activate_referral_link, name='activate-referral-link'),
-    path('ad-reward/<str:pk>/', views.ad_reward, name='ad-reward'),
+    path('ad-reward-netbo/<str:pk>/', views.ad_reward_netbo, name='ad-reward-netbo'),
+    path('ad-reward-bnb/<str:pk>/', views.ad_reward_bnb, name='ad-reward-bnb'),
     path('confirmation-otp/', views.confirmation_otp, name='confirmation-otp'),
     path('update-password/<str:email>/', views.update_password, name='update-password'),
-    path('archive-account/<str:pk>/', views.archive_account, name='archive-account'),
     path('exchange/<str:pk>/', views.exchange, name='exchange'),
     path('send-otp/', views.send_otp, name='send-otp'),
     path('verify-email/<str:pk>/', views.verify_email, name='verify-email'),
     path('balance-history/<str:pk>/', views.balance_history, name='balance-history'),
     path('get-identified-id/<str:pk>/', views.get_identified_id, name='get-identified-id'),
     path('creat-identified/<str:pk>/', views.upload_image, name='creat-identified'),
-    path("get-moneyout-id/<str:pk>/", views.get_moneyout_id, name='get-moneyout-id'),
-    path("moneyout/<str:pk>/", views.moneyout, name='moneyout'),
+    path("get-moneyout-netbo-id/<str:pk>/", views.get_moneyout_netbo_id, name='get-moneyout-netbo-id'),
+    path("get-moneyout-bnb-id/<str:pk>/", views.get_moneyout_bnb_id, name='get-moneyout-bnb-id'),
+    path("moneyout-netbo/<str:pk>/", views.moneyout_netbo, name='moneyout-netbo'),
+    path("moneyout-bnb/<str:pk>/", views.moneyout_bnb, name='moneyout-bnb'),
     path("recovery-password/<str:email>/", views.send_otp, name='recovery-password'),
 
-]
+    path('get-strength-bnb/', views.get_strength_bnb, name='get-strength-bnb'),
+    path('get-strength-netbo/', views.get_strength_netbo, name='get-strength-netbo'),
+
+] 
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

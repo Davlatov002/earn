@@ -62,14 +62,14 @@ class Identified(models.Model):
 class MoneyOutNetbo(models.Model):
     wallet_addres = models.CharField(max_length=200)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    balance_netbo = models.FloatField(default=0.0)
+    balance = models.FloatField(default=0.0)
     is_identified = models.BooleanField(null=True, blank=True)
     created_at = models.IntegerField()
 
 class MoneyOutBnb(models.Model):
     wallet_addres = models.CharField(max_length=200)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    balance_bnb = models.FloatField(default=0.0)
+    balance = models.FloatField(default=0.0)
     is_identified = models.BooleanField(null=True, blank=True)
     created_at = models.IntegerField()
 

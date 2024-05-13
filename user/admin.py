@@ -107,7 +107,7 @@ class ModelOutNetboAdmin(admin.ModelAdmin):
         if 'is_identified' in form.changed_data and form.cleaned_data['is_identified'] == False:
             a = form.cleaned_data['user']
             profile = Profile.objects.get(id=a.id)
-            b = form.cleaned_data['balance_netbo']
+            b = form.cleaned_data['balance']
             profile.balance_netbo += b
             profile.save()
         super().save_model(request, obj, form, change)
@@ -128,7 +128,7 @@ class ModelOutBnbAdmin(admin.ModelAdmin):
         if 'is_identified' in form.changed_data and form.cleaned_data['is_identified'] == False:
             a = form.cleaned_data['user']
             profile = Profile.objects.get(id=a.id)
-            b = form.cleaned_data['balance_bnb']
+            b = form.cleaned_data['balance']
             profile.balance_bnb += b
             profile.save()
         super().save_model(request, obj, form, change)

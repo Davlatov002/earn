@@ -410,7 +410,7 @@ def moneyout_netbo(request, pk):
         taim = int(time.time())
         wallet_address = request.data.get('wallet_addres')
         balance_netboo = request.data.get('balance_netbo')
-        data = {"wallet_addres":wallet_address, "user":profile.id, "balance_netbo":balance_netboo, "created_at":taim}
+        data = {"wallet_addres":wallet_address, "user":profile.id, "balance":balance_netboo, "created_at":taim}
         ser = MoneyOutNetboserialazer(data=data)
         ser.is_valid(raise_exception=True)
         ser.save()
@@ -443,7 +443,7 @@ def moneyout_bnb(request, pk):
         taim = int(time.time())
         wallet_address = request.data.get('wallet_addres')
         balance_bnb = request.data.get('balance_bnb')
-        data = {"wallet_addres":wallet_address, "user":profile.id, "balance_bnb":balance_bnb, "created_at":taim}
+        data = {"wallet_addres":wallet_address, "user":profile.id, "balance":balance_bnb, "created_at":taim}
         ser = MoneyOutBnbserialazer(data=data)
         ser.is_valid(raise_exception=True)
         ser.save()

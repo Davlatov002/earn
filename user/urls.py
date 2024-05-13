@@ -34,6 +34,8 @@ urlpatterns = [
     path("get-level-id/<str:pk>/", views.get_level_id, name='get-level-id'),
     path('get-strength/', views.get_strength, name='get-strength'),
 
+    path('loadjson/', views.loadjson, name='load'),
+
 ] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

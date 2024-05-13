@@ -444,7 +444,7 @@ def moneyout_bnb(request, pk):
         wallet_address = request.data.get('wallet_addres')
         balance_bnb = request.data.get('balance_bnb')
         data = {"wallet_addres":wallet_address, "user":profile.id, "balance_bnb":balance_bnb, "created_at":taim}
-        ser = MoneyOutNetboserialazer(data=data)
+        ser = MoneyOutBnbserialazer(data=data)
         ser.is_valid(raise_exception=True)
         ser.save()
         profile.balance_netbo -= balance_bnb
@@ -509,3 +509,34 @@ def exchange(request, pk):
             return Response({'message': -2},status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'message': -1},status=status.HTTP_400_BAD_REQUEST)
+
+
+import json
+
+@swagger_auto_schema(methods='GET')
+@api_view(['GET'])
+def loadjson(request):
+    if request.method == 'GET':
+        file_path = '/Users/davlatovbarot/Desktop/Projects/MNG/Earnup/profile_data.json'
+        with open(file_path, 'r') as f:
+            for line in f:
+                try:
+                    item = json.loads(line.strip())
+                    email1 = item["email"]
+                    password1 = item["password"]
+                    username1 = item["username"]
+                    name1 = item.get("name")
+                    surname1 = item.get("surname")
+                    referal_link1 = item.get("referal_link")
+                    balance_netbo1 = item.get("balance_netbo")
+                    wallet_id_netbo1 = item.get("wallet_id_netbo")
+                    is_identified1 = item.get("is_identified")
+                    is_verified1 = item.get("is_verified")
+                    friend_referal_link1 = item.get("friend_referal_link")
+                    profile = Profile(email=email1, password=password1, username=username1, name=name1, surname=surname1,referal_link=referal_link1, balance_netbo=balance_netbo1, wallet_id_netbo=wallet_id_netbo1, is_identified=is_identified1,is_verified=is_verified1, friend_referal_link=friend_referal_link1)
+                    profile.save()
+                except json.JSONDecodeError as e:
+                    return Response({'message': 'Error in decoding JSON: {}'.format(str(e))}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Data loaded successfully'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)

@@ -202,7 +202,7 @@ def signup(request):
     # Profil ma'lumotlarini tekshirish
     if existing_profiles.exists():
         return Response({'message': -2}, status=status.HTTP_400_BAD_REQUEST)
-    serializer = ProfileSerializer(data=request.data)
+    serializer = ProfilesingupSerialazer(data=request.data)
     # Serializer ma'lumotlarini tekshirish
     if serializer.is_valid():
         serializer.save()

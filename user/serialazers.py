@@ -1,6 +1,21 @@
 from rest_framework import serializers
 from .models import Profile, Transaction, Identified, MoneyOutNetbo, MoneyOutBnb, Strength, Level
+
+
+class LevelSerialazer(serializers.ModelSerializer):
+    class Meta:
+        model = Level
+        fields = [
+            'level',
+            'bnb',
+            'netbo', 
+            'price',
+            ]
+
+
 class ProfileSerializer(serializers.ModelSerializer):
+    netbo_level = LevelSerialazer()
+    bnb_level = LevelSerialazer()
     class Meta:
         model = Profile
         fields = '__all__'
@@ -90,16 +105,6 @@ class IdentifiedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Identified
         fields = fields = ["fullname", "birthday", "serial_document", "id_image", "address_image", "selfie_image"]
-
-class LevelSerialazer(serializers.ModelSerializer):
-    class Meta:
-        model = Level
-        fields = [
-            'level',
-            'bnb',
-            'netbo', 
-            'price',
-            ]
 
 
 
